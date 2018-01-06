@@ -1,5 +1,8 @@
 package com.ubs.connectfour.core;
 
+/**
+ * Board for connect four game.
+ */
 public interface Board {
     int DEFAULT_ROWS = 6;
     int DEFAULT_COLUMNS = 7;

@@ -6,7 +6,11 @@ import com.ubs.connectfour.core.impl.SimpleReferee;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * Represents a connect four game.
+ */
 public class Game {
 
     private final Board board;
@@ -29,7 +33,7 @@ public class Game {
         while (board.isAvailable()) {
             // Players take alternate turns
             Player player = players.get(move++ % players.size());
-            System.out.print(String.format("%s - %s: ", player, board.showTips()));
+            System.out.print(String.format("%s - %s: ", player.getDescription(), board.showTips()));
 
             // Position of this drop
             int row, column;
@@ -41,7 +45,8 @@ public class Game {
                     row = board.drop(player.getDisc(), column);
                     break;
                 } catch (IllegalArgumentException e) {
-                    System.out.print(String.format("%s - %s, %s: ", player, e.getMessage(), board.showTips()));
+                    System.out.print(String.format("%s - %s, %s: ",
+                            player.getDescription(), e.getMessage(), board.showTips()));
                 }
             }
 
@@ -49,12 +54,13 @@ public class Game {
 
             // Referee checks if current player win the game
             if (referee.judge(board, row, column)) {
-                System.out.println(String.format("%s - wins!", player));
+                System.out.println(String.format("%s - wins!", player.getDescription()));
                 return;
             }
         }
         // Board is full, the game finishes, and it is considered a draw
-        System.out.println(String.format("%s - draw!", players));
+        List<String> playersDescription = players.stream().map(Player::getDescription).collect(Collectors.toList());
+        System.out.println(String.format("%s - draw!", String.join(", ", playersDescription)));
     }
 
 }

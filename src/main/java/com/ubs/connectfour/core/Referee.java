@@ -1,6 +1,10 @@
 package com.ubs.connectfour.core;
 
+/**
+ * Defines a referee to determine if any player win the game by it's last move.
+ */
 public interface Referee {
+
     /**
      * Checks if last drop win the game.
      *
