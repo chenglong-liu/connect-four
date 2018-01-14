@@ -15,53 +15,40 @@ public class SimpleReferee implements Referee {
                 || isDiagonal(board, row, column, value);
     }
 
-    // Checks if connected 4 (Board#getWinCondition) discs in one row.
-    static boolean isHorizontal(Board board, int row, int column, int value) {
+    private static boolean isConnectedFour(Board board, int row, int column, int value, int rDelta, int cDelta) {
         int condition = board.getWinCondition();
-        for (int i = Math.max(0, column - condition + 1); i <= column; i++) {
-            int j = i + condition;
-            if (j - 1 < board.getColumns() && IntStream.range(i, j).allMatch(e -> board.getMatrix()[row][e] == value)) {
+        // Assume column is 4, row is 4, and row delta is 0, column delta is 1
+        for (int i = 0; i < condition; i++) {
+            // r is always 4
+            int r = row - rDelta * i;
+            // So need to check c in [4, 3, 2, 1]
+            int c = column - cDelta * i;
+            // When c = 4, need to check if all values at columns [4, 5, 6, 7] == value
+            boolean connectedFour = IntStream.range(0, condition).allMatch(e -> {
+                int x = r + e * rDelta;
+                int y = c + e * cDelta;
+                return 0 <= x && x < board.getRows() && 0 <= y
+                        && y < board.getColumns() && board.getMatrix()[x][y] == value;
+            });
+            if (connectedFour)
                 return true;
-            }
         }
         return false;
+    }
+
+    // Checks if connected 4 (Board#getWinCondition) discs in one row.
+    static boolean isHorizontal(Board board, int row, int column, int value) {
+        return isConnectedFour(board, row, column, value, 0, 1);
     }
 
     // Checks if connected 4 (Board#getWinCondition) discs in one column.
     static boolean isVertical(Board board, int row, int column, int value) {
-        int condition = board.getWinCondition();
-        for (int i = Math.max(0, row - condition + 1); i <= row; i++) {
-            int j = i + condition;
-            if (j - 1 < board.getRows() && IntStream.range(i, j).allMatch(e -> board.getMatrix()[e][column] == value)) {
-                return true;
-            }
-        }
-        return false;
+        return isConnectedFour(board, row, column, value, 1, 0);
     }
 
     // Checks if connected 4 (Board#getWinCondition) discs in diagonal line
     static boolean isDiagonal(Board board, int row, int column, int value) {
-        int condition = board.getWinCondition();
-        // Bottom left to upper right
-        for (int k = Math.max(0, column - condition + 1); k <= column; k++) {
-            int i = k;
-            int j = row + column - i;
-            if (i + condition <= board.getColumns() && j < board.getRows() && j - condition + 1 >= 0) {
-                if (IntStream.range(0, condition).allMatch(e -> board.getMatrix()[j - e][i + e] == value)) {
-                    return true;
-                }
-            }
-        }
-        // Upper Left to bottom right
-        for (int k = Math.max(0, column - condition + 1); k <= column; k++) {
-            int i = k;
-            int j = row - (column - i);
-            if (i + condition <= board.getColumns() && j >= 0 && j + condition <= board.getRows()) {
-                if (IntStream.range(0, condition).allMatch(e -> board.getMatrix()[j + e][i + e] == value)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return isConnectedFour(board, row, column, value, -1, 1) ||
+                isConnectedFour(board, row, column, value, 1, 1);
     }
 }
