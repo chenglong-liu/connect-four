@@ -18,7 +18,7 @@ public class SimpleBoardTest {
 
     @Test
     public void display2() throws Exception {
-        Board board = new SimpleBoard(3, 2, 4);
+        Board board = new SimpleBoard(3, 2, 3);
         board.drop(Disc.GREEN, 0);
         board.drop(Disc.GREEN, 0);
         board.drop(Disc.RED, 1);
@@ -56,6 +56,30 @@ public class SimpleBoardTest {
 
         thrown.expect(IllegalArgumentException.class);
         board.drop(Disc.GREEN, 0);
+    }
+
+    @Test
+    public void undo() throws Exception {
+        Board board = new SimpleBoard(3, 1, 3);
+        board.drop(Disc.GREEN, 0);
+        board.drop(Disc.RED, 0);
+        board.drop(Disc.GREEN, 0);
+        Assert.assertFalse(board.isAvailable());
+
+        Assert.assertEquals(0, board.undo(Disc.GREEN, 0));
+        Assert.assertTrue(board.getMatrix()[1][0] == Disc.RED.value);
+        Assert.assertEquals(2, board.undo(Disc.GREEN, 0));
+        Assert.assertTrue(board.getMatrix()[2][0] == Disc.RED.value);
+
+        Assert.assertTrue(board.isAvailable());
+
+        board.drop(Disc.RED, 0);
+        board.drop(Disc.RED, 0);
+
+        Assert.assertFalse(board.isAvailable());
+
+        thrown.expect(IllegalArgumentException.class);
+        board.undo(Disc.GREEN, 0);
     }
 
 }

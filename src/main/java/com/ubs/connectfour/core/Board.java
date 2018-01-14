@@ -17,6 +17,14 @@ public interface Board {
     int drop(Disc disc, int column);
 
     /**
+     * Remove a disc from bottom of given column, discs above the removed one will shift down one row.
+     *
+     * @return row of removed disc.
+     * @throws IllegalArgumentException if selected column is out of range or has no given disc.
+     */
+    int undo(Disc disc, int column);
+
+    /**
      * Checks if available for new disc.
      */
     boolean isAvailable();

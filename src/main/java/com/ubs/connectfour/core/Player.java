@@ -5,12 +5,12 @@ package com.ubs.connectfour.core;
  */
 public interface Player {
 
+    String UNDO = "u";
+
     /**
-     * Chooses column for next drop.
-     *
-     * @throws IllegalArgumentException if input is not an integer.
+     * Choose next move, return winning disc or NA if no winner yet.
      */
-    int choose();
+    Disc choose(Board board, Referee referee);
 
     /**
      * Returns player's selected disc.

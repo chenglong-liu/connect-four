@@ -3,31 +3,34 @@ package com.ubs.connectfour.core.impl;
 import com.ubs.connectfour.core.Board;
 import com.ubs.connectfour.core.Disc;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class SimpleBoard implements Board {
     private final int[][] matrix;
+    // row index = 0 means top, row index = rows -1 means bottom
     private final int rows;
     private final int columns;
     private final int winCondition;
 
     // Available columns, start index is 1
-    private final List<Integer> availableColumns = new ArrayList<>();
+    private final Set<Integer> availableColumns = new TreeSet<>();
 
     public SimpleBoard() {
         this(DEFAULT_ROWS, DEFAULT_COLUMNS, DEFAULT_WIN_CONDITION);
     }
 
     SimpleBoard(int rows, int columns, int winCondition) {
-        assert winCondition > 0;
+        if (winCondition > rows && winCondition > columns) {
+            throw new IllegalArgumentException("win condition must <= rows or <=columns");
+        }
         this.rows = rows;
         this.columns = columns;
         this.winCondition = winCondition;
         this.matrix = new int[this.rows][this.columns];
 
-        for (int i = 1; i < columns + 1; i++)
-            this.availableColumns.add(i);
+        for (int column = 0; column < columns; column++)
+            this.availableColumns.add(column + 1);
     }
 
     @Override
@@ -38,23 +41,47 @@ public class SimpleBoard implements Board {
         return String.format("please choose column %s", this.availableColumns);
     }
 
+    private void checkColumn(int column) {
+        if (column < 0 || column >= this.columns)
+            throw new IllegalArgumentException("invalid column");
+    }
+
     @Override
     public int drop(Disc disc, int column) {
-        if (column < 0 || column >= this.columns) {
-            throw new IllegalArgumentException("invalid column");
-        }
+        checkColumn(column);
         for (int row = this.rows - 1; row > -1; row--) {
             if (this.matrix[row][column] == Disc.NA.value) {
                 this.matrix[row][column] = disc.value;
                 if (row == 0) {
                     // Column is full now
-                    this.availableColumns.remove(this.availableColumns.indexOf(column + 1));
+                    this.availableColumns.remove(column + 1);
                 }
                 return row;
             }
         }
         throw new IllegalArgumentException("selected column is full");
     }
+
+    @Override
+    public int undo(Disc disc, int column) {
+        checkColumn(column);
+        // Row index = 0 means top, row index = rows -1 means bottom
+        for (int row = 0; row < this.rows; row++) {
+            if (this.matrix[row][column] == disc.value) {
+                for (int i = row; i > 0; i--) {
+                    // Shift all discs above down one row
+                    this.matrix[i][column] = this.matrix[i - 1][column];
+                }
+                // Top row of this column is available anyway.
+                this.matrix[0][column] = Disc.NA.value;
+                // The column is available for next drop after removed a disc
+                this.availableColumns.add(column + 1);
+                return row;
+            }
+        }
+        throw new IllegalArgumentException(String.format("no %s disc found at column %s", disc, column + 1));
+    }
+
 
     @Override
     public void display() {
