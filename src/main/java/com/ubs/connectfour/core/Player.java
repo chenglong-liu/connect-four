@@ -13,11 +13,6 @@ public interface Player {
     boolean choose(Board board, Referee referee);
 
     /**
-     * Returns player's selected disc.
-     */
-    Disc getDisc();
-
-    /**
      * Returns a short description of player.
      */
     String getDescription();

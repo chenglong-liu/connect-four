@@ -29,18 +29,17 @@ public class Game {
 
     public void play() {
         board.display();
-        for (int move = 0; board.isAvailable(); ) {
+        for (int move = 0; board.isAvailable(); move++) {
             // Players take alternate turns
-            move = move % players.size();
-            Player player = players.get(move);
+            Player player = players.get(move % players.size());
 
             boolean isWinner = player.choose(board, referee);
+
             board.display();
             if (isWinner) {
                 System.out.println(String.format("%s - wins!", player.getDescription()));
                 return;
             }
-            move++;
         }
         // Board is full, the game finishes, and it is considered a draw
         List<String> descriptions = players.stream().map(Player::getDescription).collect(Collectors.toList());

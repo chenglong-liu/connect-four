@@ -7,15 +7,4 @@ public enum Disc {
     Disc(int i) {
         this.value = i;
     }
-
-    public static Disc valueOf(int value) {
-        switch (value) {
-            case 1:
-                return RED;
-            case 2:
-                return GREEN;
-            default:
-                return NA;
-        }
-    }
 }

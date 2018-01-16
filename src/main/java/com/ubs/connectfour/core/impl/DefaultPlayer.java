@@ -53,11 +53,6 @@ public class DefaultPlayer implements Player {
     }
 
     @Override
-    public Disc getDisc() {
-        return this.disc;
-    }
-
-    @Override
     public String getDescription() {
         return this.description;
     }
