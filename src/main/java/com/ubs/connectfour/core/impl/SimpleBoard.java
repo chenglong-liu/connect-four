@@ -3,6 +3,7 @@ package com.ubs.connectfour.core.impl;
 import com.ubs.connectfour.core.Board;
 import com.ubs.connectfour.core.Disc;
 
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,7 +13,7 @@ public class SimpleBoard implements Board {
     private final int rows;
     private final int columns;
     private final int winCondition;
-
+    private final LinkedList<Integer> history = new LinkedList<>();
     // Available columns, start index is 1
     private final Set<Integer> availableColumns = new TreeSet<>();
 
@@ -56,6 +57,7 @@ public class SimpleBoard implements Board {
                     // Column is full now
                     this.availableColumns.remove(column + 1);
                 }
+                this.history.add(column);
                 return row;
             }
         }
@@ -63,23 +65,20 @@ public class SimpleBoard implements Board {
     }
 
     @Override
-    public int undo(Disc disc, int column) {
-        checkColumn(column);
+    public void undo() {
+        if (this.history.isEmpty()) {
+            throw new IllegalArgumentException("no disc on board");
+        }
+        int column = this.history.removeLast();
         // Row index = 0 means top, row index = rows -1 means bottom
         for (int row = 0; row < this.rows; row++) {
-            if (this.matrix[row][column] == disc.value) {
-                for (int i = row; i > 0; i--) {
-                    // Shift all discs above down one row
-                    this.matrix[i][column] = this.matrix[i - 1][column];
-                }
-                // Top row of this column is available anyway.
-                this.matrix[0][column] = Disc.NA.value;
-                // The column is available for next drop after removed a disc
-                this.availableColumns.add(column + 1);
-                return row;
+            if (Disc.NA.value != this.matrix[row][column]) {
+                this.matrix[row][column] = Disc.NA.value;
+                break;
             }
         }
-        throw new IllegalArgumentException(String.format("no %s disc found at column %s", disc, column + 1));
+        // After a successful undo, the column should be available anyway.
+        this.availableColumns.add(column + 1);
     }
 
 

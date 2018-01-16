@@ -8,9 +8,9 @@ public interface Player {
     String UNDO = "u";
 
     /**
-     * Choose next move, return winning disc or NA if no winner yet.
+     * Choose next move, return true if player winners else is not clear.
      */
-    Disc choose(Board board, Referee referee);
+    boolean choose(Board board, Referee referee);
 
     /**
      * Returns player's selected disc.

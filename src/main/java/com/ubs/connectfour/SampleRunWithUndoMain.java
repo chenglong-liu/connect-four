@@ -14,8 +14,8 @@ class SampleRunWithUndoMain {
     public static void main(String[] args) {
         System.out.println("Sample Run With Undo\n");
 
-        List<String> choices1 = Arrays.asList("2", "3", "3", "4", "7", "1", "1", "u", "u");
-        List<String> choices2 = Arrays.asList("2", "4", "3", "4", "4", "7", "1");
+        List<String> choices1 = Arrays.asList("4", "5", "3", "6", "3");
+        List<String> choices2 = Arrays.asList("4", "5", "u", "6");
 
         Player player1 = new PredefinedPlayer("Player 1", Disc.RED, choices1.iterator());
         Player player2 = new PredefinedPlayer("Player 2", Disc.GREEN, choices2.iterator());

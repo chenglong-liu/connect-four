@@ -66,20 +66,19 @@ public class SimpleBoardTest {
         board.drop(Disc.GREEN, 0);
         Assert.assertFalse(board.isAvailable());
 
-        Assert.assertEquals(0, board.undo(Disc.GREEN, 0));
-        Assert.assertTrue(board.getMatrix()[1][0] == Disc.RED.value);
-        Assert.assertEquals(2, board.undo(Disc.GREEN, 0));
-        Assert.assertTrue(board.getMatrix()[2][0] == Disc.RED.value);
+        board.undo();
 
         Assert.assertTrue(board.isAvailable());
-
-        board.drop(Disc.RED, 0);
-        board.drop(Disc.RED, 0);
+        Assert.assertTrue(board.getMatrix()[0][0] == Disc.NA.value);
+        board.drop(Disc.GREEN, 0);
 
         Assert.assertFalse(board.isAvailable());
 
+        board.undo();
+        board.undo();
+        board.undo();
         thrown.expect(IllegalArgumentException.class);
-        board.undo(Disc.GREEN, 0);
+        board.undo();
     }
 
 }
